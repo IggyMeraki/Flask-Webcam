@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+    <title>Webcam Stream App</title>
+    <style>
+        .camera-feed {
+            width: 70%;
+            height: auto;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto;
+        }
+        .audio-feed {
+            width: 100%;
+        }
+    </style>
+    <script>
+        function getDeviceInfo() {
+            var width = window.innerWidth;
+            var height = window.innerHeight;
+            var urlParams = new URLSearchParams(window.location.search);
+            if (!urlParams.has('width') || !urlParams.has('height')) {
+                urlParams.set('width', width - 100);
+                urlParams.set('height', height - 200);
+                window.location.search = urlParams.toString();
+            }
+        }
+    </script>
+</head>
+<body onload="getDeviceInfo()">
+    {% if num_cameras > 0 %}
+        {% for camera_id in range(num_cameras) %}
+        <img src="{{ url_for('video_feed', camera_id=camera_id, width=request.args.get('width'), height=request.args.get('height')) }}" class="camera-feed">
+        {% endfor %}
+    {% else %}
+        <p>No cameras found</p>
+    {% endif %}
+    
+    <audio controls autoplay class="audio-feed">
+        <source src="{{ url_for('audio_feed') }}" type="audio/wav">
+        Your browser does not support the audio element.
+    </audio>
+</body>
+</html>
